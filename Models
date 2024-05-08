@@ -61,9 +61,9 @@ namespace dotnetapp.Models
        protected override void OnModelCreating(ModelBuilder modelBuilder)
        {
            modelBuilder.Entity<Commuter>().
-           HasOne(a=>a.Ride).
-           WithMany(b=>b.Commuters).
-           HasForeignKey(c=>c.RideID);
+           HasOne(i => i.Ride).
+           WithMany(i => i.Commuters).
+           HasForeignKey(i => i.RideID);
            // Seed data
            modelBuilder.Entity<Ride>().HasData(
                new Ride { RideID = 1, DepartureLocation = "Location1", Destination = "Destination1", DateOfDeparture = DateTime.Now, MaximumCapacity = 4 },
