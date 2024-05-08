@@ -91,3 +91,57 @@ namespace dotnetapp.Controllers
 }
 
 *** SlotController
+
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using dotnetapp.Models;
+using System;
+using System.Linq;
+using System.Threading.Tasks;
+using dotnetapp.Exceptions;
+
+
+namespace dotnetapp.Controllers
+{
+    public class SlotController : Controller
+    {
+        private readonly RideSharingDbContext ctx;
+        public SlotController(RideSharingDbContext ctx)
+        {
+            this.ctx = ctx;
+        }
+        public IActionResult JoinRide(int rideId)
+        {
+            // This funtion is called whren the user clicks on the join ride button
+            // get the ride with the rideId from the database
+            // if the ride is not found return NotFound()
+            // if the maximum capacity is reached throw RideSharingException with message "Maximum capacity reached"
+            // Returns a view with a form to join a ride
+            var ride = ctx.Rides.Include(i => i.Commuters).FirstOrDefault(i => i.RideID == rideId);
+            if(ride == null){
+                return NotFound();
+            }
+            if(ride.Commuters.Count > ride.MaximumCapacity){
+                throw new RideSharingException("Maximum capacity reached");
+            }
+
+            Commuter temp = new Commuter();
+            temp.RideID = rideId;
+            return View(temp);
+        }
+        [HttpPost]
+        public IActionResult JoinRide(int rideId, Commuter commuter)
+        {
+            // This function is called when the user submits the join ride form
+            // get the ride with the rideId from the database
+            // if the ride is not found return NotFound()
+            // if the maximum capacity is reached throw RideSharingException with message "Maximum capacity reached"
+            // create a new commuter with the details from the form
+            // Use ModelState.IsValid to check if the form is valid
+            // If the form is valid add the commuter to the database, save changes and redirect to the Details action of the Ride controller
+            // If the form is not valid return the view with the form
+            return View();
+        }
+
+    }
+}
