@@ -1,0 +1,93 @@
+*** RideController
+
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using dotnetapp.Models;
+using System;
+using System.Linq;
+using System.Threading.Tasks;
+using System.Collections.Generic;
+
+namespace dotnetapp.Controllers
+{
+    public class RideController : Controller
+    {
+         private readonly RideSharingDbContext ctx;
+        public RideController(RideSharingDbContext ctx)
+        {
+            this.ctx = ctx;
+        }
+        public IActionResult AvailableRides()
+        {
+            // This function is called on default page load
+            // Get all rides from the database
+            // Return a view with a list of all rides
+            List<IndexViewModel> model = new List<IndexViewModel>();
+            List<Ride> ride = ctx.Rides.Include(i => i.Commuters).ToList();
+            foreach (var i in ride)
+            {
+                IndexViewModel obj = new IndexViewModel();
+                obj.RideID = i.RideID;
+                obj.DepartureLocation = i.DepartureLocation;
+                obj.Destination = i.Destination;
+                obj.DateOfDeparture = i.DateOfDeparture;
+                obj.MaximumCapacity = i.MaximumCapacity;
+                obj.JoinedCommuters = i.Commuters.Count;
+                obj.AvailableSeats = i.MaximumCapacity - i.Commuters.Count;
+                model.Add(obj);
+            }
+            return View(model);
+        }
+
+
+        public IActionResult Details(int id)
+        {
+            // This function is called when the user submits the join ride form
+            // get the ride with the rideId from the database inlcuding the commuters
+            // if the ride is not found return NotFound()
+            // calculate the number of joined commuters and available seats and store them in ViewBag
+            // Returns a view with the details of a Particular ride
+            var ride = ctx.Rides.Include(i => i.Commuters).FirstOrDefault(i => i.RideID == id);
+            if(ride == null){
+                return NotFound();
+
+            }
+            ViewBag.JoinedCommuters = ride.Commuters.Count;
+            ViewBag.AvailableSeats =ride.MaximumCapacity - ride.Commuters.Count;
+            return View(ride);
+        }
+
+        public IActionResult DeleteConfirm(int id)
+        {
+            // This function is called when the user clicks on the delete button
+            // get the ride with the rideId from the database inlcuding the commuters
+            // if the ride is not found return NotFound()
+            // Returns a view to confirm the deletion of a ride
+
+            var ride = ctx.Rides.Find(id);
+            if(ride == null){
+                return NotFound();
+            }
+            return View(ride);
+        }
+
+        [HttpPost]
+        public IActionResult Delete(int id)
+        {
+            // This function is called when the user confirms the deletion of a ride
+            // get the ride with the rideId from the database
+            // if the ride is not found return NotFound()
+            // delete the ride from the database
+            // save changes and redirect to the AvailableRides action
+            var ride = ctx.Rides.Find(id);
+            if(ride == null){
+                return NotFound();
+            }
+            ctx.Rides.Remove(ride);
+            ctx.SaveChanges();
+            return RedirectToAction("AvailableRides");
+        }
+    }
+}
+
+*** SlotController
