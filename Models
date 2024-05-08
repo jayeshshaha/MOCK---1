@@ -1,0 +1,99 @@
+*** Commuter
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using System.ComponentModel.DataAnnotations;
+using Microsoft.EntityFrameworkCore;
+namespace dotnetapp.Models
+{
+   public class Commuter{
+       public int CommuterID { get; set; }
+       public string Name { get; set; }
+       public string Email { get; set; }
+       public string Phone { get; set; }
+       public int RideID { get; set; }
+    
+       public Ride Ride { get; set; }
+   }
+}
+
+*** Ride 
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using System.ComponentModel.DataAnnotations;
+using Microsoft.EntityFrameworkCore;
+namespace dotnetapp.Models
+{
+   public class Ride{
+       public int RideID { get; set; }
+       public string DepartureLocation { get; set; }
+       public string Destination { get; set; }
+       public DateTime DateOfDeparture { get; set; }
+       public int MaximumCapacity { get; set; }
+       public List<Commuter> Commuters { get; set; }
+   }
+}
+
+*** RideSharingDbContext
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using System.ComponentModel.DataAnnotations;
+using Microsoft.EntityFrameworkCore;
+namespace dotnetapp.Models
+{
+   public class RideSharingDbContext : DbContext
+   {
+       public RideSharingDbContext(DbContextOptions<RideSharingDbContext> options) : base(options)
+       {
+       }
+       // Add your DbSets here with the appropriate models for creating tables named "Commuters" and "Rides"
+       public DbSet<Ride> Rides { get; set; }
+       public DbSet<Commuter> Commuters { get; set; }
+       
+       protected override void OnModelCreating(ModelBuilder modelBuilder)
+       {
+           modelBuilder.Entity<Commuter>().
+           HasOne(a=>a.Ride).
+           WithMany(b=>b.Commuters).
+           HasForeignKey(c=>c.RideID);
+           // Seed data
+           modelBuilder.Entity<Ride>().HasData(
+               new Ride { RideID = 1, DepartureLocation = "Location1", Destination = "Destination1", DateOfDeparture = DateTime.Now, MaximumCapacity = 4 },
+               new Ride { RideID = 2, DepartureLocation = "Location2", Destination = "Destination2", DateOfDeparture = DateTime.Now, MaximumCapacity = 3 },
+               new Ride { RideID = 3, DepartureLocation = "Location3", Destination = "Destination3", DateOfDeparture = DateTime.Now, MaximumCapacity = 2 },
+               new Ride { RideID = 4, DepartureLocation = "Location4", Destination = "Destination4", DateOfDeparture = DateTime.Now, MaximumCapacity = 4 },
+               new Ride { RideID = 5, DepartureLocation = "Location5", Destination = "Destination5", DateOfDeparture = DateTime.Now, MaximumCapacity = 3 }
+           );
+       }
+   }
+}
+
+*** IndexViewModel
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using System.ComponentModel.DataAnnotations;
+using Microsoft.EntityFrameworkCore;
+namespace dotnetapp.Models
+{
+   public class IndexViewModel
+   {
+       public int RideID { get; set; }
+       public string DepartureLocation { get; set; }
+       public string Destination { get; set; }
+       public DateTime DateOfDeparture { get; set; }
+       public int MaximumCapacity { get; set; }
+       public int JoinedCommuters { get; set; }
+       public int AvailableSeats { get; set; }
+   }
+}
+ 
