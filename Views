@@ -91,3 +91,37 @@ Available Seats
 
 *** Slot
 
+
+@*  Create a page that allows a user to join a ride. 
+    The page should have a form that allows the user to enter their name, email, and phone number. 
+    The form should also display the ride ID with a read-only input field.
+    The form should have a submit button that sends the data to the server. 
+    The server should add the user to the ride and redirect the user to the Available Rides page.
+*@
+@model Commuter;
+<h1>Join Ride</h1>
+<form  method="post">
+    <input type="text" asp-for="Name">
+    <span asp-validation-for="Name"></span>
+    <br>
+
+    <input type="email" asp-for="Email">
+    <span asp-validation-for="Email"></span>
+    <br>
+
+    <input type="text" asp-for="Phone">
+    <span asp-validation-for="Phone"></span>
+    <br>
+
+    <input type="text" asp-for="Phone">
+    <span asp-validation-for="Phone"></span>
+    <br>
+
+    <input type="number" readonly asp-for="RideID">
+    <span asp-validation-for="RideID"></span>
+    <br>
+
+    <button type="submit">Join Ride</button>
+    <a href="/Ride/Available/Rides">Back to Available Rides</a>
+</form>
+
