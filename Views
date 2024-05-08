@@ -1,0 +1,93 @@
+*** Ride 
+@* Create page to display all rides available to join in table format (table should have a header row and a row for each ride)
+- header row should have the following columns: 
+    Departure Location, 
+    Destination, 
+    Date Of Departure, 
+    Maximum Capacity, 
+    Joined Commuters, 
+    Available Seats
+- allow user to join a ride if there are available seats with a link to the join page which should be an anchor tag with id "join" and text "Join"
+    or display a message if there are no available seats
+*@
+
+@model List<IndexViewModel>
+<h1>Available Rides</h1>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Departure Location</th>
+            <th>Destination</th>
+            <th>DateOfDeparture</th>
+            <th>Maximum Capacity</th>
+            <th>Joined Commuters</th>
+            <th>Available Seats</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var i in Model)
+        {
+        <tr>
+            <td>@i.DepartureLocation</td>
+            <td>@i.Destination</td>
+            <td>@i.DateOfDeparture</td>
+            <td>@i.MaximumCapacity</td>
+            <td>@i.JoinedCommuters</td>
+            <td>@i.AvailableSeats</td>
+            <td>
+                @if(@i.AvailableSeats > 0){
+                    <a href="/Slot/JoinRide?rideId=@i.RideID" class="btn btn-primary" id="join">Join</a>
+                    <a href="/Ride/DeleteConfirm/@i.RideID" class="btn btn-danger" id="delete">Delete</a>
+                } else {
+                    <span class="btn btn-info">No seats available</span>
+                    <a href="/Ride/DeleteConfirm/@i.RideID" class="btn btn-danger" id="delete">Delete</a>
+                }
+            </td>
+        </tr>
+        }
+    </tbody>
+</table>
+
+---
+
+@* Create a Delete Confirmation page to confirm the deletion of a ride  
+    Page should display the ride details and a confirmation message
+*@
+
+@model Ride;
+<h1>Delete Ride</h1>
+<p>Are you sure you want to delete this ride?</p>
+<p><b>Ride ID:</b> @Model.RideID</p>
+<p><b>Departure location:</b> @Model.DepartureLocation</p>
+<p><b>Destination:</b> @Model.Destination</p>
+<form asp-action="Delete" asp-route-id="@Model.RideID" method="post">
+    <button class="btn btn-danger" type="submit">Delete</button>
+    <a href="/Ride/AvailableRides" class="btn btn-secondary">Cancel</a>
+</form>
+
+---
+
+@* Create a page to display the details of a ride. The page should display the following information:
+Ride ID
+Departure Location
+Destination
+Date Of Departure
+Maximum Capacity
+Joined Commuters
+Available Seats
+*@
+@model Ride;
+
+<h1>Ride Details</h1>
+<p>Departure Location: @Model.DepartureLocation</p>
+<p>Destination: @Model.Destination</p>
+<p>Date and Time: @Model.DateOfDeparture</p>
+<p>Maximum Capacity: @Model.MaximumCapacity</p>
+<p>Maximum Capacity: @Model.MaximumCapacity</p>
+<p>Joined Commuters: @ViewBag.JoinedCommuters</p>
+<p>Availabe Seats: @ViewBag.AvailableSeats</p>
+<a href="/Ride/AvailableRides"  class="text-primary">Back to Availabe Rides</a>
+
+*** Slot
+
