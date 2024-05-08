@@ -96,4 +96,9 @@ namespace dotnetapp.Models
        public int AvailableSeats { get; set; }
    }
 }
+----------------------------------------------------------------------------------------------
+
+builder.Services.AddDbContext<RideSharingDbContext>(
+    i => i.UseSqlServer("User ID=sa;password=examlyMssql@123;server=localhost;Database=appdb;trusted_connection=false;Persist Security Info=False;Encrypt=False")
+);
  
